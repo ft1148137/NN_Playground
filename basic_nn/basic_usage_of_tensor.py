@@ -1,0 +1,27 @@
+import torch
+import numpy as np
+##basic usage of torch
+x = torch.empty(5,5)
+print (x)
+x = torch.zeros(3,3)
+print(x)
+x = torch.tensor([[4,5,6],[6,7,8]])
+print(x)
+x = torch.rand(4,5,dtype = torch.float16)
+print(x)
+y = torch.randn_like(x)
+print(x + y)
+y.add_(x)
+print(y)
+print(y[:,1:])
+print(y[:-1,:])
+z = y.view(-1,4)
+print(z)
+## numpy and tensor
+a = torch.zeros(4,4).numpy()
+print(a)
+b = torch.from_numpy(a)
+print(b)
+print(torch.cuda.is_available())
+# c = torch.zeros(3,3,device=0)
+# b = b.to(device=0)
