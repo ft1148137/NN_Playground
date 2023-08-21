@@ -1,6 +1,5 @@
 import torch.nn as nn
 import torch
-import numpy as np
 import math
 
 class SingleAttention(nn.Module):
@@ -26,16 +25,22 @@ class SingleAttention(nn.Module):
 class MultiHeadAttention(nn.Module):
     def __init__(self,D_k,D_model):
         super(MultiHeadAttention,self).__init__()
-        self.single_attention = SingleAttention(D_k,D_model)
         self.no_single_attention = int(D_model/D_k)
+        self.MultiHeadAttention = nn.ModuleList([SingleAttention(D_k,D_model) for i in range(int(D_model/D_k))])
         pass
     
     def forward(self,q,k,v,mask = False):
-        return torch.cat([self.single_attention(q,k,v,mask) for i in range(self.no_single_attention)],1)
+        out = []
+        for block in self.MultiHeadAttention:
+            out.append(block(q,k,v))
+        return torch.cat(out,dim=1)
     
-    
-    
+##test net    
 x = torch.randn(5,512)
 model = MultiHeadAttention(64,512)
-y = model(x,x,x)      
-print(y.shape)  
+model.eval()
+print(sum(p.numel() for p in model.parameters()))  
+y = model(x,x,x) 
+print(model)  
+print(y.shape)   
+torch.save(model,'save.pt')
